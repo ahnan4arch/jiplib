@@ -1,0 +1,109 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.bican</groupId>
+	<artifactId>jiplib</artifactId>
+	<version>0.0.1</version>
+	<name>IP addresses library</name>
+	<description>This library makes it possible to describe IP address ranges. It can convert to and from netmasked, CIDR and range notations for arbitrary ranges</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
+	<build>
+		<plugins>
+			<plugin>
+				<version>3.1</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.9</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<phase>site-deploy</phase>
+						<configuration>
+							<server>github</server>
+							<message>Building site for jiplib</message>
+							<path>${site.path}</path>
+							<merge>true</merge>
+							<repositoryName>jiplib</repositoryName>
+							<repositoryOwner>canbican</repositoryOwner>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<skipDeploy>true</skipDeploy>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<url>https://github.com/canbican/jiplib</url>
+	<scm>
+		<url>https://github.com/canbican/jiplib</url>
+		<connection>scm:git:git@github.com:canbican/jiplib.git</connection>
+		<developerConnection>scm:git:git@github.com:canbican/jiplib.git</developerConnection>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/canbican/jiplib/issues</url>
+	</issueManagement>
+	<organization>
+		<name>Can Bican</name>
+		<url>http://www.bican.net/</url>
+	</organization>
+	<developers>
+		<developer>
+			<email>can@bican.net</email>
+			<name>Can Bican</name>
+			<url>http://www.bican.net/</url>
+			<id>canbican</id>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<ciManagement>
+		<system>Travis</system>
+		<url>https://travis-ci.org/canbican/jiplib/</url>
+	</ciManagement>
+</project>
