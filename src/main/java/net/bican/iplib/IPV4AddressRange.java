@@ -10,7 +10,7 @@ import com.google.common.net.InetAddresses;
  *
  * @author Can Bican
  */
-public class IPV4AddressRange implements LongDiscreteDomain<IPAddress> {
+class IPV4AddressRange implements LongDiscreteDomain<IPAddress> {
   private static final LongDiscreteDomain<IPAddress> INSTANCE = new IPV4AddressRange();
 
   private static final IPAddress MAXVALUE = IPAddress.getInstance(InetAddresses

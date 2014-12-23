@@ -11,59 +11,66 @@ import com.google.common.collect.Range;
  * An {@code Iterable} for IP addresses, with size information
  *
  * @author Can Bican
- * @param <T>
  */
-public class AddressIterable<T extends IPAddress> implements Iterable<T>,
-Iterator<T> {
-
-  private T current;
-  private LongDiscreteDomain<T> domain;
-  private Range<T> range;
-
+public class AddressIterable implements Iterable<IPAddress>,
+    Iterator<IPAddress> {
+  
+  private IPAddress current;
+  private LongDiscreteDomain<IPAddress> domain;
+  private Range<IPAddress> range;
+  
   private AddressIterable() {
     // nothing here
   }
-
+  
   /**
    * @param range
    *          the address range
    * @param domain
    *          addressing domain
    */
-  public AddressIterable(final Range<T> range,
-      final LongDiscreteDomain<T> domain) {
+  public AddressIterable(final Range<IPAddress> range) {
     this();
     this.range = range;
-    this.domain = domain;
+    this.domain = (LongDiscreteDomain<IPAddress>) range.lowerEndpoint()
+        .getDomain();
     this.current = range.lowerEndpoint();
+    if (range.lowerBoundType() == BoundType.OPEN) {
+      this.current = this.domain.next(this.current);
+    }
   }
-
+  
   @Override
   public boolean hasNext() {
-    return (this.domain.next(this.current) != null);
+    return (this.current != null);
   }
-
+  
   @Override
-  public Iterator<T> iterator() {
+  public Iterator<IPAddress> iterator() {
     return this;
   }
-
+  
   @Override
-  public T next() {
-    final T result = this.domain.next(this.current);
+  public IPAddress next() {
+    final IPAddress result = this.current;
     if (result == null) {
       throw new NoSuchElementException();
     }
-    this.current = result;
-    return this.current;
+    IPAddress newCurrent = this.domain.next(this.current);
+    if ((newCurrent == null) || (!this.range.contains(newCurrent))) {
+      this.current = null;
+    } else {
+      this.current = newCurrent;
+    }
+    return result;
   }
-
+  
   @Override
   public void remove() {
     throw new UnsupportedOperationException(
         "remove not supported on continous ranges"); //$NON-NLS-1$
   }
-
+  
   /**
    * @return size of the address range
    */

@@ -8,7 +8,7 @@ import java.math.BigInteger;
  * @author Can Bican
  * @param <C>
  */
-public interface LongDiscreteDomain<C extends Comparable<?>> {
+interface LongDiscreteDomain<C extends Comparable<?>> {
 
   /**
    * @param start

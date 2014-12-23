@@ -1,7 +1,6 @@
 package net.bican.iplib;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -15,7 +14,7 @@ import com.google.common.collect.Range;
  * @author Can Bican
  */
 public class IPAddresses {
-  private static Range<IPAddress> canonical(final Range<IPAddress> range,
+  static Range<IPAddress> canonical(final Range<IPAddress> range,
       final LongDiscreteDomain<IPAddress> domain) {
     if (range.isEmpty()) {
       return null;
@@ -33,7 +32,7 @@ public class IPAddresses {
     }
     return range;
   }
-
+  
   private static Set<Range<IPAddress>> findOneConnected(
       final Set<Range<IPAddress>> intervals) {
     Range<IPAddress> f1 = null;
@@ -55,7 +54,9 @@ public class IPAddresses {
       }
     }
     if (f1 != null) {
-      final Set<Range<IPAddress>> newIntervals = new HashSet<>(intervals);
+      final Set<Range<IPAddress>> newIntervals = new TreeSet<>(
+          IPAddressRangeComparator.getComparator());
+      newIntervals.addAll(intervals);
       final Range<IPAddress> f = f1.span(f2);
       newIntervals.remove(f1);
       newIntervals.remove(f2);
@@ -64,7 +65,7 @@ public class IPAddresses {
     }
     return intervals;
   }
-
+  
   /**
    * creates a range of ip addresses from CIDR notation
    *
@@ -78,7 +79,7 @@ public class IPAddresses {
         .closed(cidr.getFirst(), cidr.getLast());
     return range;
   }
-
+  
   private static Set<Range<IPAddress>> fromConnectedInterval(
       final Range<IPAddress> interval) {
     if (interval.isEmpty()) {
@@ -93,37 +94,27 @@ public class IPAddresses {
       final Range<IPAddress> otherRange = IPAddresses.fromCIDR(new CIDR(
           thisRange.lowerEndpoint(), prefix));
       if (thisRange.equals(otherRange)) {
-        return new HashSet<>(Collections.singleton(otherRange));
-      } else if (thisRange.encloses(otherRange)) {
-        final Set<Range<IPAddress>> result = new HashSet<>();
+        TreeSet<Range<IPAddress>> result = new TreeSet<>(
+            IPAddressRangeComparator.getComparator());
         result.add(otherRange);
-        Range<IPAddress> newRange1 = null;
-        Range<IPAddress> newRange2 = null;
-        if (thisRange.upperEndpoint().equals(otherRange.upperEndpoint())) {
-          newRange1 = Range.closedOpen(thisRange.lowerEndpoint(),
-              otherRange.lowerEndpoint());
-        } else if (thisRange.lowerEndpoint().equals(otherRange.lowerEndpoint())) {
-          newRange1 = Range.openClosed(thisRange.upperEndpoint(),
-              otherRange.upperEndpoint());
-        } else {
-          newRange1 = Range.closedOpen(thisRange.lowerEndpoint(),
-              otherRange.lowerEndpoint());
-          newRange2 = Range.openClosed(otherRange.upperEndpoint(),
-              thisRange.upperEndpoint());
+        return result;
+      } else if (thisRange.encloses(otherRange)) {
+        final Set<Range<IPAddress>> result = new TreeSet<>(
+            IPAddressRangeComparator.getComparator());
+        result.add(otherRange);
+        Range<IPAddress> newRange1 = Range.closedOpen(
+            thisRange.lowerEndpoint(), otherRange.lowerEndpoint());
+        Range<IPAddress> newRange2 = Range.openClosed(
+            otherRange.upperEndpoint(), thisRange.upperEndpoint());
+        final Set<Range<IPAddress>> results1 = IPAddresses
+            .fromConnectedInterval(newRange1);
+        if (results1 != null) {
+          result.addAll(results1);
         }
-        if (newRange1 != null) {
-          final Set<Range<IPAddress>> results = IPAddresses
-              .fromConnectedInterval(newRange1);
-          if (results != null) {
-            result.addAll(results);
-          }
-        }
-        if (newRange2 != null) {
-          final Set<Range<IPAddress>> results = IPAddresses
-              .fromConnectedInterval(newRange2);
-          if (results != null) {
-            result.addAll(results);
-          }
+        final Set<Range<IPAddress>> results2 = IPAddresses
+            .fromConnectedInterval(newRange2);
+        if (results2 != null) {
+          result.addAll(results2);
         }
         return result;
       }
@@ -131,16 +122,17 @@ public class IPAddresses {
     }
     return new TreeSet<>(Collections.singleton(interval));
   }
-
+  
   private static Set<Range<IPAddress>> fromConnectedInterval(
       final Set<Range<IPAddress>> intervals) {
-    final Set<Range<IPAddress>> result = new HashSet<>();
+    final Set<Range<IPAddress>> result = new TreeSet<>(
+        IPAddressRangeComparator.getComparator());
     for (final Range<IPAddress> interval : intervals) {
       result.addAll(IPAddresses.fromConnectedInterval(interval));
     }
     return result;
   }
-
+  
   /**
    * creates a set of ranges that fit into CIDR ranges from the interval of ip
    * addresses
@@ -152,11 +144,12 @@ public class IPAddresses {
   public static Set<Range<IPAddress>> fromInterval(
       final Range<IPAddress> interval) {
     Preconditions.checkNotNull(interval, "interval cannot be null"); //$NON-NLS-1$
-    final Set<Range<IPAddress>> sourceRange = new HashSet<>(
-        Collections.singleton(interval));
+    final Set<Range<IPAddress>> sourceRange = new TreeSet<>(
+        IPAddressRangeComparator.getComparator());
+    sourceRange.add(interval);
     return IPAddresses.fromInterval(sourceRange);
   }
-
+  
   /**
    * creates a set of ranges that fit into CIDR ranges from the interval of ip
    * addresses
@@ -165,7 +158,7 @@ public class IPAddresses {
    *          address intervals
    * @return the set of ranges
    */
-  public static Set<Range<IPAddress>> fromInterval(
+  static Set<Range<IPAddress>> fromInterval(
       final Set<Range<IPAddress>> intervals) {
     Preconditions.checkNotNull(intervals, "intervals cannot be null"); //$NON-NLS-1$
     Preconditions.checkArgument(intervals.size() > 0,
@@ -184,7 +177,7 @@ public class IPAddresses {
       return IPAddresses.fromConnectedInterval(intervalsCleaned);
     }
   }
-
+  
   /**
    * creates a range of ip addresses from netmask notation
    *
@@ -197,10 +190,11 @@ public class IPAddresses {
     final CIDR cidr = CIDR.fromNetmask(netmask);
     return IPAddresses.fromCIDR(cidr);
   }
-
+  
   private static Set<Range<IPAddress>> removeEmptyIntervals(
       final Set<Range<IPAddress>> intervals) {
-    final Set<Range<IPAddress>> result = new HashSet<>();
+    final Set<Range<IPAddress>> result = new TreeSet<>(
+        IPAddressRangeComparator.getComparator());
     for (final Range<IPAddress> i : intervals) {
       if (!i.isEmpty()) {
         result.add(i);
@@ -208,7 +202,7 @@ public class IPAddresses {
     }
     return result;
   }
-
+  
   /**
    * transforms the range to CIDR notation, if any is possible
    *
