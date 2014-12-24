@@ -2,6 +2,8 @@
 
 This is a java library for manipulating IP address ranges. It makes use of [Guava](https://github.com/google/guava) [Ranges](https://code.google.com/p/guava-libraries/wiki/RangesExplained).
 
+Library can handle both IPv4 and IPv6 addresses.
+
 Here is a brief tutorial:
 
 ### Creating a network range CIDR address:
