@@ -39,7 +39,7 @@ System.out.println("range contains ip: "
     .forString("10.10.21.20")))); // returns false
 ```
 
-### Creating a range from an arbitray interval:
+### Creating a range from an arbitrary interval:
 
 This code creates a set of ranges that can be represented by CIDR prefixes:
 
