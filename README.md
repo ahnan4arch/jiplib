@@ -56,3 +56,4 @@ for (Range<IPAddress> i : ips) {
 ```
 
 [![Build Status](https://travis-ci.org/canbican/jiplib.svg?branch=master)](https://travis-ci.org/canbican/jiplib)
+[![codecov.io](https://codecov.io/github/canbican/jiplib/coverage.svg?branch=master)](https://codecov.io/github/canbican/jiplib?branch=master)
