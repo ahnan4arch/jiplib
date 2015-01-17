@@ -1,3 +1,12 @@
+/*
+ * 
+ * jiplib
+ * https://github.com/canbican/jiplib
+ * 
+ * Copyright 2015 Can Bican <can@bican.net>
+ * See the file 'LICENSE' in the distribution for licensing terms.
+ * 
+ */
 package net.bican.iplib.sample;
 
 import java.util.Set;
