@@ -4,6 +4,18 @@ This is a java library for manipulating IP address ranges. It makes use of [Guav
 
 Library can handle both IPv4 and IPv6 addresses.
 
+### Using
+
+As a maven dependency:
+
+```xml
+<dependency>
+  <groupId>net.bican</groupId>
+  <artifactId>jiplib</artifactId>
+  <version>0.1</version>
+</dependency>
+```
+
 Here is a brief tutorial:
 
 ### Creating a network range CIDR address:
