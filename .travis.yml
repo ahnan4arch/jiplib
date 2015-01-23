@@ -5,3 +5,4 @@ before_install:
   sudo pip install codecov
 after_success:
   codecov
+install: mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B -V
